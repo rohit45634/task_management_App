@@ -11,10 +11,15 @@ import Register from "./pages/Register.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import Home from "./pages/Home.jsx"
 function App(){
+            const user = JSON.parse(
+    localStorage.getItem("user") || "null"
+  );
+
 
 return(
 
 <BrowserRouter>
+
 <Routes>
 <Route
 path="/"
@@ -30,16 +35,16 @@ path="/register"
 element={<Register/>}
 />
 
+
+
 <Route
-path="/dashboard"
+  path="/dashboard"
+
   element={
-    JSON.parse(
-      localStorage.getItem("user") || "null"
-    )
+    user
       ? <Dashboard />
       : <Navigate to="/" replace />
   }
-
 />
 
 </Routes>

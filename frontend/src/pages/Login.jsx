@@ -29,7 +29,7 @@ const res=
 
 await axios.post(
 
-"http://localhost:5000/api/auth/login",
+"https://task-management-app-n0qy.onrender.com/api/auth/login",
 
 {
 
@@ -44,22 +44,17 @@ password
 )
 
 const user = res.data.user
-console.log("User:", user);
 
 
 localStorage.setItem(
 "user",
 JSON.stringify(user)
 )
-console.log(
-  localStorage.getItem("user")
-);
 
 
 toast.success("Login Success")
 
-navigate("/dashboard")
-
+window.location.href = "/dashboard";
 }
 
 catch(error){
