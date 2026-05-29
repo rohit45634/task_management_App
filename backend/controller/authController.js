@@ -63,9 +63,25 @@ export const login = async (req, res) => {
       secure: false, // true if using HTTPS
       sameSite: "Lax",
     });
+    res.status(200).json({
+      message: "login Success",
+      token,
+      user: {
+        id: user._id,
 
-    res.status(200).json({ message: "login succesfull", token });
+        name: user.name,
+
+        email: user.email,
+      },
+    });
   } catch (error) {
     res.status(500).json(error);
   }
+};
+export const logout = async (req, res) => {
+  res.clearCookie("token");
+
+  res.status(200).json({
+    message: "Logout Success",
+  });
 };

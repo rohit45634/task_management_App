@@ -1,93 +1,105 @@
-import {
-useState
-}
-from "react";
+import { useState } from "react";
+import "./login.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import axios
-from "axios";
+export default function Login() {
 
-import {
-useNavigate
-}
-from "react-router-dom";
+const navigate=useNavigate()
 
-function Login(){
+const [email,setEmail]=useState("")
+const [password,setPassword]=useState("")
 
-const navigate=
-useNavigate();
+async function handleLogin(e){
 
-const[data,setData]=
-useState({
+e.preventDefault()
 
-email:"",
-password:""
+if(!email || !password){
 
-})
+toast.error("Fill all fields")
 
-const handleChange=
-(e)=>{
-
-setData({
-
-...data,
-
-[e.target.name]:
-e.target.value
-
-})
+return
 
 }
 
-const handleSubmit=
-async(e)=>{
+try{
 
-e.preventDefault();
+const res=
 
-const result=
 await axios.post(
 
 "http://localhost:5000/api/auth/login",
 
-data
+{
+
+email,
+
+password
+
+},{
+  withCredentials:true
+}
 
 )
+
+const user = res.data.user
 
 localStorage.setItem(
+"user",
+JSON.stringify(user)
+)
+toast.success("Login Success")
 
-"token",
+navigate("/dashboard")
 
-result.data.token
+}
 
+catch(error){
+
+console.log(error)
+
+toast.error(    error.response?.data?.message || "Login Failed"
 )
 
-navigate(
-"/dashboard"
-)
+}
 
 }
 
 return(
 
-<div>
+<div className="loginPage">
+
+<div className="loginCard">
 
 <h1>
-Login
+
+Welcome Back 👋
+
 </h1>
 
+<p>
+
+Login to manage your tasks efficiently
+
+</p>
+
 <form
-onSubmit={
-handleSubmit
-}
+onSubmit={handleLogin}
 >
 
 <input
 
-name="email"
+type="email"
 
-placeholder="Email"
+placeholder="Enter Email"
 
-onChange={
-handleChange
+value={email}
+
+onChange={(e)=>
+
+setEmail(e.target.value)
+
 }
 
 />
@@ -96,17 +108,19 @@ handleChange
 
 type="password"
 
-name="password"
+placeholder="Enter Password"
 
-placeholder="Password"
+value={password}
 
-onChange={
-handleChange
+onChange={(e)=>
+
+setPassword(e.target.value)
+
 }
 
 />
 
-<button>
+<button type="submit">
 
 Login
 
@@ -114,10 +128,26 @@ Login
 
 </form>
 
+<div className="bottomText">
+
+Don't have an account?
+
+<span
+onClick={()=>
+navigate("/register")
+}
+>
+
+ Register
+
+</span>
+
+</div>
+
+</div>
+
 </div>
 
 )
 
 }
-
-export default Login;

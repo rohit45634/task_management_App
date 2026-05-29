@@ -1,7 +1,7 @@
 import {
  BrowserRouter,
  Routes,
- Route
+ Route,Navigate
 } from "react-router-dom";
 
 import Login from "./pages/Login.jsx";
@@ -9,7 +9,7 @@ import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 
 import Dashboard from "./pages/Dashboard.jsx";
-
+import Home from "./pages/Home.jsx"
 function App(){
 
 return(
@@ -18,6 +18,10 @@ return(
 <Routes>
 <Route
 path="/"
+element={<Home/>}
+/>
+<Route
+path="/login"
 element={<Login/>}
 />
 
@@ -28,7 +32,11 @@ element={<Register/>}
 
 <Route
 path="/dashboard"
-element={<Dashboard/>}
+element={
+      localStorage.getItem("user")
+        ? <Dashboard />
+        : <Navigate to="/" replace />
+    }
 />
 
 </Routes>

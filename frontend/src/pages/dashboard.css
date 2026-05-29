@@ -20,6 +20,10 @@ overflow-x:hidden;
 display:flex;
 
 min-height:100vh;
+width:100%;
+
+overflow-x:hidden;
+
 
 background:#050d1f;
 
@@ -76,6 +80,9 @@ color:white;
 }
 
 .main{
+width:100%;
+
+overflow-x:hidden;
 
 flex:1;
 
@@ -115,7 +122,6 @@ margin-bottom:25px;
 
 .card{
 
-background:#0f1d38;
 
 padding:25px;
 
@@ -355,7 +361,10 @@ grid-template-columns:
 
 }
 
-.main{
+.main{width:100%;
+
+overflow-x:hidden;
+
 
 padding:15px;
 
@@ -368,5 +377,118 @@ display:block;
 overflow-x:auto;
 
 }
+
+}
+.addTaskBox{
+
+background:#10182b;
+
+padding:25px;
+
+border-radius:20px;
+
+width:100%;
+
+max-width:500px;
+
+margin:auto;
+
+}
+
+.addTaskBox h2{
+
+margin-bottom:20px;
+color: white;
+
+}
+
+.addTaskBox form{
+
+display:flex;
+
+flex-direction:column;
+
+gap:15px;
+
+}
+
+.addTaskBox input,
+.addTaskBox textarea,
+.addTaskBox select{
+
+padding:14px;
+
+background:#18223d;
+
+border:none;
+
+color:white;
+
+border-radius:10px;
+
+outline:none;
+
+}
+
+.addTaskBox textarea{
+
+height:100px;
+
+resize:none;
+
+}
+
+.addTaskBox button{
+
+background:#6c4bff;
+
+padding:14px;
+
+border:none;
+
+color:white;
+
+border-radius:10px;
+
+cursor:pointer;
+
+}
+.tasks{
+          color: white;
+}
+.profile{
+
+display:flex;
+
+align-items:center;
+
+gap:10px;
+margin-bottom:3px ;
+
+padding:10px 18px;
+
+background:#101b35;
+
+border-radius:30px;
+
+color:white;
+
+font-weight:600;
+
+cursor:pointer;
+
+box-shadow:
+0 0 15px
+rgba(0,0,0,.2);
+
+}
+
+.topBar{
+
+display:flex;
+
+justify-content:flex-end;
+
+margin-bottom:20px;
 
 }

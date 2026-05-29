@@ -1,95 +1,115 @@
-import {
- useState
-}
-from "react";
+import { useState } from "react";
+import "./register.css";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
-import axios
-from "axios";
+export default function Register() {
 
-import {
- useNavigate
-}
-from "react-router-dom";
+const navigate=useNavigate()
 
-function Register(){
+const [name,setName]=useState("")
+const [email,setEmail]=useState("")
+const [password,setPassword]=useState("")
 
-const navigate=
-useNavigate();
+async function handleRegister(e){
 
-const[data,setData]=
-useState({
+e.preventDefault()
 
-name:"",
-email:"",
-password:""
+if(!name || !email || !password){
 
-});
+toast.error("Fill all fields")
 
-const handleChange=
-(e)=>{
-
-setData({
-
-...data,
-
-[e.target.name]:
-e.target.value
-
-})
+return
 
 }
 
-const handleSubmit=
-async(e)=>{
+try{
 
-e.preventDefault();
+const res=
 
 await axios.post(
 
 "http://localhost:5000/api/auth/register",
 
-data
+{
+
+name,
+
+email,
+
+password
+
+}
 
 )
 
-navigate("/")
+toast.success("Register Success")
+
+navigate("/login")
+
+}
+
+catch(error){
+
+console.log(error)
+
+toast.error("User Already Exists")
+
+}
 
 }
 
 return(
 
-<div>
+<div className="registerPage">
+
+<div className="registerCard">
 
 <h1>
-Register
+
+Create Account 🚀
+
 </h1>
 
+<p>
+
+Register to start managing your tasks
+
+</p>
+
 <form
-onSubmit={
-handleSubmit
-}
+onSubmit={handleRegister}
 >
 
 <input
 
-name="name"
+type="text"
 
-placeholder="Name"
+placeholder="Enter Name"
 
-onChange={
-handleChange
+value={name}
+
+onChange={(e)=>
+
+setName(e.target.value)
+
 }
 
 />
 
 <input
 
-name="email"
+type="email"
 
-placeholder="Email"
+placeholder="Enter Email"
 
-onChange={
-handleChange
+value={email}
+
+onChange={(e)=>
+
+setEmail(e.target.value)
+
 }
 
 />
@@ -98,17 +118,19 @@ handleChange
 
 type="password"
 
-name="password"
+placeholder="Enter Password"
 
-placeholder="Password"
+value={password}
 
-onChange={
-handleChange
+onChange={(e)=>
+
+setPassword(e.target.value)
+
 }
 
 />
 
-<button>
+<button type="submit">
 
 Register
 
@@ -116,10 +138,26 @@ Register
 
 </form>
 
+<div className="bottomText">
+
+Already have an account?
+
+<span
+onClick={()=>
+navigate("/login")
+}
+>
+
+ Login
+
+</span>
+
+</div>
+
+</div>
+
 </div>
 
 )
 
 }
-
-export default Register;

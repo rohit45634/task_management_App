@@ -1,28 +1,341 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./dashboard.css";
+import axios from "axios";
+import {
 
+LineChart,
+CartesianGrid,Legend,
+Line,
+
+XAxis,
+
+YAxis,
+
+Tooltip,
+
+ResponsiveContainer,
+Cell,PieChart,Pie
+
+
+}
+
+from "recharts"
+import {  useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function Dashboard() {
 
-const [page,setPage]=useState("dashboard")
+const [page,setPage]=useState(localStorage.getItem("page") || "dashboard")
+const [title,setTitle]=useState("")
+const [description,setDescription]=useState("")
+const [priority,setPriority]=useState("Medium")
+const [tasks,setTasks]=useState([])
+const [editId, setEditId] = useState(null);
+const navigate = useNavigate();
+const [showMenu, setShowMenu] = useState(false);
+const changePage = (newPage) => {   
+  setPage(newPage);
+  localStorage.setItem("page", newPage);
+};
 
-const tasks=[
+async function handleSubmit(e){
+
+e.preventDefault()
+
+if(!title || !description){
+
+toast.error("Fill all fields")
+
+return;
+
+}
+
+if (editId) {
+  await axios.put(
+    `http://localhost:5000/api/task/update/${editId}`,
+    {
+      title,
+      description,
+      priority
+    },
+    {
+      withCredentials: true
+    }
+  );
+
+  setEditId(null);
+  fetchTasks();
+  changePage("task");
+  return;
+}
+
+const task={
+
+title,
+
+description,
+
+priority,
+
+
+}
+try{
+
+const res=
+
+await axios.post(
+
+"http://localhost:5000/api/task/create",
+
+task,  {
+    withCredentials: true
+  }
+
+
+)
+setTasks(
+
+[
+
+...tasks,
+
+res.data
+
+]
+
+)
+
+fetchTasks()
+
+
+toast.success("Task Added")
+
+setTitle("")
+setDescription("")
+setPriority("Medium")
+
+}
+
+catch(error){
+
+console.log(error)
+
+toast.error("API Error")
+
+}
+
+}
+const handleLogout = async () => {
+  await axios.get(
+    "http://localhost:5000/api/auth/logout",
+    
+    { withCredentials: true }
+  );
+
+  localStorage.removeItem("user");  
+  localStorage.removeItem("page");
+
+
+  navigate("/login");
+};
+async function fetchTasks(){
+
+try{
+
+const res=
+
+await axios.get(
+
+"http://localhost:5000/api/task/get",  {
+    withCredentials: true
+  }
+
+
+)
+
+setTasks(
+
+res.data
+
+)
+
+}
+
+catch(error){
+
+console.log(error)
+
+}
+
+}
+
+const overviewData=[
 
 {
-id:1,
-title:"Learn React",
-priority:"High",
-status:"Pending"
+day:"Mon",
+completed:4,
+pending:6
 },
 
 {
-id:2,
-title:"Task Manager",
-priority:"Medium",
-status:"Completed"
+day:"Tue",
+completed:7,
+pending:3
+},
+
+{
+day:"Wed",
+completed:5,
+pending:5
+},
+
+{
+day:"Thu",
+completed:8,
+pending:2
+},
+
+{
+day:"Fri",
+completed:6,
+pending:4
+},
+
+{
+day:"Sat",
+completed:9,
+pending:1
+},
+
+{
+day:"Sun",
+completed:7,
+pending:3
 }
 
 ]
 
+const statusData=[
+
+{
+
+name:"Completed",
+
+value:
+
+tasks.filter(
+
+task=>
+
+task.status==="Completed"
+
+).length
+
+},
+
+{
+
+name:"Pending",
+
+value:
+
+tasks.filter(
+
+task=>
+
+task.status==="Pending"
+
+).length
+
+}
+
+]
+
+const COLORS=[
+
+"#22c55e",
+
+"#f59e0b"
+
+]
+async function deleteTask(id){
+
+try{
+
+await axios.delete(
+
+`http://localhost:5000/api/task/delete/${id}`,  {
+    withCredentials: true
+  }
+
+
+)
+
+fetchTasks()
+
+}
+
+catch(error){
+
+console.log(error)
+
+}
+
+}
+
+useEffect(()=>{
+  fetchTasks()
+},[])
+async function toggleStatus(
+
+id,
+
+currentStatus
+
+){
+
+try{
+
+const newStatus=
+
+currentStatus==="Pending"
+
+?
+
+"Completed"
+
+:
+
+"Pending"
+
+await axios.put(
+
+`http://localhost:5000/api/task/update/${id}`,
+  
+
+{
+
+status:newStatus
+
+},{
+    withCredentials: true
+  }
+
+)
+
+fetchTasks()
+
+}
+
+catch(error){
+
+console.log(error)
+
+}
+
+}
+const user = JSON.parse(
+localStorage.getItem("user")
+)
 return(
 
 <div className="container">
@@ -34,28 +347,33 @@ return(
 <h2>TaskFlow</h2>
 
 <div onClick={()=>
-setPage("dashboard")
+changePage("dashboard")
 }>
 Dashboard
 </div>
 
 <div onClick={()=>
-setPage("task")
+changePage("task")
 }>
 Task
 </div>
 
 <div onClick={()=>
-setPage("add")
+changePage("add")
 }>
 Add Task
 </div>
 
-<div onClick={()=>
-setPage("completed")
+<div className="completedMenu"
+ onClick={()=>
+changePage("completed")
 }>
 Completed
 </div>
+<button className="Logout"onClick={handleLogout} 
+ >
+Logout
+</button>
 
 </div>
 
@@ -72,106 +390,335 @@ page==="dashboard"
 &&
 
 <>
+<div className="topBar"><div className="profile"  style={{color:"white"}}>
 
-<div className="top">
+👤 {user?.name}
 
-<h1>
+</div></div>
 
-Good Morning Rohit 👋
 
-</h1>
+<div className="cards" >
 
-</div>
+<div className="card blue" >
 
-<div className="cards">
+<div className="cardTop">
 
-<div className="card">
+<div className="iconBox">
 
-<h4>
-
-Total Task
-
-</h4>
-
-<h1>
-
-128
-
-</h1>
+📋
 
 </div>
 
-<div className="card">
 
-<h4>
+
+</div>
+
+<p>
+
+Total Tasks
+
+</p>
+
+<h1>
+
+{tasks.length}
+
+
+</h1>
+
+
+
+</div>
+
+<div className="card green">
+
+<div className="cardTop">
+
+<div className="iconBox">
+
+✅
+
+</div>
+
+
+
+</div>
+
+<p>
 
 Completed
 
-</h4>
+</p>
 
 <h1>
 
-86
+{
+
+tasks.filter(
+
+task=>
+
+task.status==="Completed"
+
+).length
+
+}
+
+
 
 </h1>
 
+
 </div>
 
-<div className="card">
+<div className="card orange">
 
-<h4>
+<div className="cardTop">
 
-Progress
+<div className="iconBox">
 
-</h4>
+⏰
+
+</div>
+
+
+
+</div>
+
+<p>
+
+In Progress
+
+</p>
 
 <h1>
 
-32
+{
+
+tasks.filter(
+
+task=>
+
+task.status==="Pending"
+
+).length
+
+}
 
 </h1>
 
-</div>
 
-<div className="card">
-
-<h4>
-
-Overdue
-
-</h4>
-
-<h1>
-
-10
-
-</h1>
 
 </div>
 
 </div>
 
-<div className="chartBox">
+<div className="chartsContainer">
+
+{/* LINE CHART */}
+
+<div className="chartCard">
+
+<div className="chartHeader">
 
 <h2>
 
-Task Overview Chart
+Task Overview
 
 </h2>
 
 </div>
 
-<div className="bottomGrid">
+<ResponsiveContainer
+width="100%"
+height={300}
+>
 
-<div className="barChart">
+<LineChart
+data={overviewData}
+>
 
-Project Chart
+<CartesianGrid
+strokeDasharray="3 3"
+stroke="#1e293b"
+/>
+
+<XAxis
+dataKey="day"
+stroke="#94a3b8"
+/>
+
+<YAxis
+stroke="#94a3b8"
+/>
+
+<Tooltip />
+
+<Legend />
+
+<Line
+
+type="monotone"
+
+dataKey="completed"
+
+stroke="#22c55e"
+
+strokeWidth={3}
+
+dot={false}
+
+/>
+
+<Line
+
+type="monotone"
+
+dataKey="pending"
+
+stroke="#8b5cf6"
+
+strokeWidth={3}
+
+dot={false}
+
+/>
+
+</LineChart>
+
+</ResponsiveContainer>
 
 </div>
 
-<div className="activity">
+{/* PIE CHART */}
+
+<div className="chartCard">
+
+<h2>
+
+Task Status
+
+</h2>
+
+<ResponsiveContainer
+width="100%"
+height={300}
+>
+
+<PieChart>
+
+<Pie
+
+data={statusData}
+
+cx="50%"
+
+cy="50%"
+
+outerRadius={100}
+
+dataKey="value"
+
+label
+
+>
+
+{
+
+statusData.map(
+
+(entry,index)=>
+
+<Cell
+
+key={index}
+
+fill={COLORS[index % COLORS.length]}
+
+/>
+
+)
+
+}
+
+</Pie>
+
+<Tooltip />
+
+<Legend />
+
+</PieChart>
+
+</ResponsiveContainer>
+
+</div>
+
+</div>
+
+
+<div className="bottomGrid" style={{  marginTop: "2vw"}}>
+
+<div className="upcomingBox">
+
+<h2>
+
+Upcoming Tasks
+
+</h2>
+
+{
+
+tasks.slice(0,4).map(task=>
+
+<div
+className="taskItem"
+key={task._id}
+>
+
+<h4>
+
+{task.title}
+
+</h4>
+
+<p>
+
+{task.priority} Priority
+
+</p>
+
+</div>
+
+)
+
+}
+
+</div>
+<div className="activityBox" style={{color:"white"}}>
+
+<h2>
 
 Recent Activity
+
+</h2>
+
+<div className="activityItem">
+
+✅ Task Completed
+
+</div>
+
+<div className="activityItem">
+
+📌 New Task Added
+
+</div>
+
+<div className="activityItem">
+
+🗑 Task Deleted
+
+</div>
 
 </div>
 
@@ -189,7 +736,7 @@ page==="task"
 
 &&
 
-<div>
+<div className="tasks">
 
 <h2>
 
@@ -203,16 +750,23 @@ All Tasks
 
 <tr>
 
-<th>
+<th style={{paddingLeft:"2vw"}}>
 Task
 </th>
-
 <th>
+
+Description
+
+</th>
+<th style={{paddingLeft:"4vw"}}>
 Priority
 </th>
 
-<th>
+<th style={{paddingLeft:"6vw"}}>
 Status
+</th>
+<th  style={{paddingLeft:"5vw"}}>
+Action
 </th>
 
 </tr>
@@ -228,12 +782,17 @@ tasks.map(
 task=>
 
 <tr
-key={task.id}
+key={task._id}
 >
 
 <td>
 
 {task.title}
+
+</td>
+<td>
+
+{task.description}
 
 </td>
 
@@ -243,9 +802,78 @@ key={task.id}
 
 </td>
 
+
 <td>
 
-{task.status}
+{
+
+task.status==="Pending"
+
+?
+
+"🟠 Pending"
+
+:
+
+"🟢 Completed"
+
+}
+
+</td>
+
+<td>
+
+<div className="actionButtons">
+
+<button
+className="toggleBtn" onClick={()=>{toggleStatus(task._id,
+
+task.status)}}
+>
+
+{
+
+task.status==="Pending"
+
+?
+
+"✓ Complete"
+
+:
+
+"↩ Pending"
+
+}
+
+</button>
+
+<button
+className="editBtn"
+  onClick={() => {
+    setTitle(task.title);
+    setDescription(task.description);
+    setPriority(task.priority);
+    setEditId(task._id);
+    changePage("add");
+  }}>
+
+✏️
+
+</button>
+
+<button
+className="deleteBtn"onClick={()=>
+
+deleteTask(task._id)
+
+}
+>
+
+🗑
+
+</button>
+
+</div>
 
 </td>
 
@@ -272,6 +900,7 @@ page==="add"
 &&
 
 <div>
+<div className="addTaskBox">
 
 <h2>
 
@@ -279,17 +908,87 @@ Add Task
 
 </h2>
 
+<form
+onSubmit={handleSubmit}
+>
+
 <input
 
-placeholder="Task Name"
+type="text"
+
+placeholder="Task Title"
+
+value={title}
+
+onChange={(e)=>
+
+setTitle(
+e.target.value
+)
+
+}
 
 />
 
-<button>
+<textarea
 
-Add
+placeholder="Task Description"
+
+value={description}
+
+onChange={(e)=>
+
+setDescription(
+e.target.value
+)
+
+}
+
+/>
+
+<select
+
+value={priority}
+
+onChange={(e)=>
+
+setPriority(
+e.target.value
+)
+
+}
+
+>
+
+<option>
+
+Low
+
+</option>
+
+<option>
+
+Medium
+
+</option>
+
+<option>
+
+High
+
+</option>
+
+</select>
+
+<button type="submit">
+
+Add Task
 
 </button>
+
+</form>
+
+</div>
 
 </div>
 
@@ -303,9 +1002,9 @@ page==="completed"
 
 &&
 
-<div>
+<div style={{color:"white"}}>
 
-<h2>
+<h2 >
 
 Completed Task
 
@@ -328,7 +1027,7 @@ task.status==="Completed"
 task=>
 
 <p
-key={task.id}
+key={task._id}
 >
 
 {task.title}
