@@ -44,11 +44,18 @@ password
 )
 
 const user = res.data.user
+console.log("User:", user);
+
 
 localStorage.setItem(
 "user",
 JSON.stringify(user)
 )
+console.log(
+  localStorage.getItem("user")
+);
+
+
 toast.success("Login Success")
 
 navigate("/dashboard")

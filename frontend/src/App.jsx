@@ -32,11 +32,14 @@ element={<Register/>}
 
 <Route
 path="/dashboard"
-element={
-      localStorage.getItem("user")
-        ? <Dashboard />
-        : <Navigate to="/" replace />
-    }
+  element={
+    JSON.parse(
+      localStorage.getItem("user") || "null"
+    )
+      ? <Dashboard />
+      : <Navigate to="/" replace />
+  }
+
 />
 
 </Routes>
