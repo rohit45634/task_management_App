@@ -26,7 +26,6 @@ return
 
 try{
 
-const res=
 
 await axios.post(
 

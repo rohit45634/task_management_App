@@ -31,7 +31,6 @@ const [priority,setPriority]=useState("Medium")
 const [tasks,setTasks]=useState([])
 const [editId, setEditId] = useState(null);
 const navigate = useNavigate();
-const [showMenu, setShowMenu] = useState(false);
 const changePage = (newPage) => {   
   setPage(newPage);
   localStorage.setItem("page", newPage);
