@@ -50,7 +50,7 @@ return;
 
 if (editId) {
   await axios.put(
-    `http://localhost:5000/api/task/update/${editId}`,
+    `https://task-management-app-n0qy.onrender.com/api/task/update/${editId}`,
     {
       title,
       description,
@@ -83,7 +83,7 @@ const res=
 
 await axios.post(
 
-"http://localhost:5000/api/task/create",
+"https://task-management-app-n0qy.onrender.com/api/task/create",
 
 task,  {
     withCredentials: true
@@ -125,7 +125,7 @@ toast.error("API Error")
 }
 const handleLogout = async () => {
   await axios.get(
-    "http://localhost:5000/api/auth/logout",
+    "https://task-management-app-n0qy.onrender.com/api/auth/logout",
     
     { withCredentials: true }
   );
@@ -144,7 +144,7 @@ const res=
 
 await axios.get(
 
-"http://localhost:5000/api/task/get",  {
+"https://task-management-app-n0qy.onrender.com/api/task/get",  {
     withCredentials: true
   }
 
@@ -262,7 +262,7 @@ try{
 
 await axios.delete(
 
-`http://localhost:5000/api/task/delete/${id}`,  {
+`https://task-management-app-n0qy.onrender.com/api/task/delete/${id}`,  {
     withCredentials: true
   }
 
@@ -308,7 +308,7 @@ currentStatus==="Pending"
 
 await axios.put(
 
-`http://localhost:5000/api/task/update/${id}`,
+`https://task-management-app-n0qy.onrender.com/api/task/update/${id}`,
   
 
 {

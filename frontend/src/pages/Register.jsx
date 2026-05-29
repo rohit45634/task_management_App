@@ -29,7 +29,7 @@ try{
 
 await axios.post(
 
-"http://localhost:5000/api/auth/register",
+"https://task-management-app-n0qy.onrender.com/api/auth/register",
 
 {
 
