@@ -26,7 +26,7 @@ export const createTask = async (req, res) => {
 
       priority,
 
-      // user: req.user.id,
+      userId: req.user.id,
     });
 
     res.status(201).json({
@@ -46,7 +46,7 @@ export const createTask = async (req, res) => {
 export const getTask = async (req, res) => {
   try {
     const tasks = await Task.find({
-      //       user: req.user.id,
+      userId: req.user.id,
     });
 
     res.status(200).json(tasks);
@@ -63,7 +63,7 @@ export const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const task = await Task.findById(id);
+    const task = await Task.findOne({ _id: id, userId: req.user.id });
 
     if (!task) {
       return res.status(404).json({
@@ -99,7 +99,7 @@ export const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const task = await Task.findById(id);
+    const task = await Task.findOne({ _id: id, userId: req.user.id });
 
     if (!task) {
       return res.status(404).json({
