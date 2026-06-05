@@ -1,0 +1,22 @@
+name: Deploy Application
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: stop contaier
+        run: docker compose down
+
+      - name: build container
+        run: docker compose build
+
+      - name: start the container
+        run: docker compose up -d
