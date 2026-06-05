@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "2000:5173"
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:5000"
+
+  mongodb:
+    image: mongo
+    ports:
+      - "2800:27017"
