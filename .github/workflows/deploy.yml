@@ -6,17 +6,11 @@ on:
       - main
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     steps:
       - name: checkout code
         uses: actions/checkout@v4
 
-      - name: stop contaier
-        run: docker compose down
-
-      - name: build container
-        run: docker compose build
-
-      - name: start the container
-        run: docker compose up -d
+      - name: test runner
+        run: echo "hello world"
