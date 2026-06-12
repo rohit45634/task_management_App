@@ -6,6 +6,11 @@ import genToken from "../config/token.js";
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
+    if (password.length <= 8) {
+      return res.status(400).json({
+        message: "Password must be at least 8 characters",
+      });
+    }
 
     const userExist = await User.findOne({ email });
 
@@ -50,6 +55,9 @@ export const login = async (req, res) => {
       return res.status(400).json({
         message: "Wrong Password",
       });
+    }
+    if (compare.length <= 8) {
+      return "Password must be at least 8 characters";
     }
 
     const token = genToken(
